@@ -2,4 +2,12 @@
     <string name="app_name">ComposeTutorial</string>
     <string name="show_less">Show less</string>
     <string name="show_more">Show more</string>
+    <string name="watering_needs_prefix">Watering needs</string>
+    <string name="watering_needs_suffix">days</string>
+
+    <plurals name="days">
+        <item quantity="one">%d día.</item>
+        <item quantity="other">%d días.</item>
+    </plurals>
+
 </resources>
