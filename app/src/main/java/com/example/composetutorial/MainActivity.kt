@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 
@@ -32,18 +33,13 @@ data class Message(val author: String, val body: String, val showMore: String, v
 @Composable
 fun MyApp(modifier: Modifier = Modifier) {
 
-    var shouldShowOnBoarding by remember { mutableStateOf(true) }
+    var shouldShowOnBoarding by rememberSaveable { mutableStateOf(true) }
 
     Surface(modifier) {
         if (shouldShowOnBoarding) {
             OnBoardingScreen(onContinueClicked = { shouldShowOnBoarding = false })
         } else {
-            Greetings(
-                listOf(
-                    Message("Hello", "compose", "show more", "show less"),
-                    Message("Hello", "world", "show more", "show less")
-                )
-            )
+            Greetings()
         }
     }
 }
@@ -81,7 +77,7 @@ fun OnBoardingPreview() {
 
 @Composable
 fun Greeting(msg: Message) {
-    val expanded = remember { mutableStateOf(false) }
+    val expanded = rememberSaveable { mutableStateOf(false) }
 
     val extraPadding = if (expanded.value) 58.dp else 0.dp
 
@@ -127,7 +123,12 @@ fun Greeting(msg: Message) {
 }
 
 @Composable
-fun Greetings(messages: List<Message>) {
+fun Greetings(
+    messages: List<Message> = List(1000) {
+        index ->
+        Message("Hello", "compose #$index!", "show more", "show less")
+    }
+) {
     LazyColumn {
         items(messages) { item ->
             Greeting(item)
