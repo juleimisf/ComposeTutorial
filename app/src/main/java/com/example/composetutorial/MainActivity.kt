@@ -3,6 +3,10 @@ package com.example.composetutorial
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.ui.Modifier
@@ -16,6 +20,12 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.Icons.Filled
+import androidx.compose.material.icons.filled.ArrowDropUp
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,9 +87,7 @@ fun OnBoardingPreview() {
 
 @Composable
 fun Greeting(msg: Message) {
-    val expanded = rememberSaveable { mutableStateOf(false) }
-
-    val extraPadding = if (expanded.value) 58.dp else 0.dp
+    var expanded by remember { mutableStateOf(false) }
 
     Surface(
         color = MaterialTheme.colors.primary,
@@ -91,29 +99,36 @@ fun Greeting(msg: Message) {
             Column(
                 Modifier
                     .weight(3f)
-                    .padding(bottom = extraPadding)
+                    .padding(12.dp)
+                    .animateContentSize(
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        )
+                    )
             ) {
                 Text(
                     text = msg.author,
                     modifier = Modifier.padding(start = 16.dp, top = 16.dp)
                 )
                 Text(
-                    text = msg.body,
+                    text = msg.author,
                     modifier = Modifier.padding(start = 16.dp, bottom = 16.dp)
                 )
+                if (expanded) {
+                    Text(text = msg.body.repeat(8))
+                }
+
             }
-            Button(
-                modifier = Modifier.padding(16.dp),
-                onClick = { expanded.value = !expanded.value },
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray),
-                elevation = ButtonDefaults.elevation(
-                    defaultElevation = 6.dp,
-                    pressedElevation = 8.dp,
-                    disabledElevation = 0.dp
-                ),
-            ) {
-                Text(if (!expanded.value) msg.showMore else msg.showLess)
+            IconButton(onClick = { expanded = !expanded }) {
+                Icon(
+                    imageVector = if (expanded) Filled.ArrowDropUp else Filled.ArrowDropDown ,
+                    contentDescription = if (expanded) {
+                        stringResource(R.string.show_less)
+                    } else {
+                        stringResource(R.string.show_more)
+                    }
+                )
             }
         }
 
@@ -124,8 +139,7 @@ fun Greeting(msg: Message) {
 
 @Composable
 fun Greetings(
-    messages: List<Message> = List(1000) {
-        index ->
+    messages: List<Message> = List(1000) { index ->
         Message("Hello", "compose #$index!", "show more", "show less")
     }
 ) {
