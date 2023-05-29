@@ -1,6 +1,8 @@
 package com.example.composetutorial
 
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
+import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.animateContentSize
@@ -29,13 +31,20 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.text.HtmlCompat
 
 class PlantDetailDescriptionActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        
+
         setContent {
+            val plant = Plant("id", "Apple", "HTML<br><br>description", 3, 30, "")
             ComposeTutorialTheme {
-                PlantDetailDescription()
+                PlantDetailContent(plant)
             }
         }
     }
@@ -60,6 +69,7 @@ fun PlantDetailContent(plant: Plant) {
     Column(Modifier.padding(8.dp)) {
         PlantName(plant.name)
         PlantWatering(plant.wateringInterval)
+        PlantDescription(plant.description)
     }
 }
 
@@ -90,7 +100,7 @@ data class Plant(
 @Preview
 @Composable
 fun MyAppPlantDetailPreview() {
-    val plant = Plant("id", "Apple", "description", 3, 30, "")
+    val plant = Plant("id", "Apple", "HTML<br><br>description", 3, 30, "")
     ComposeTutorialTheme {
         PlantDetailContent(plant)
     }
@@ -126,6 +136,32 @@ private fun PlantWatering(wateringInterval: Int) {
 private fun PlantWateringPreview() {
     MaterialTheme {
         PlantWatering(7)
+    }
+}
+
+@Composable
+fun PlantDescription(description: String) {
+    val htmlDescription = remember(description) {
+        HtmlCompat.fromHtml(description, HtmlCompat.FROM_HTML_MODE_COMPACT)
+    }
+
+    AndroidView(
+        factory = { context ->
+            TextView(context).apply {
+                movementMethod = LinkMovementMethod.getInstance()
+            }
+        },
+        update = {
+            it.text = htmlDescription
+        }
+    )
+}
+
+@Preview
+@Composable
+private fun PlantDescriptionPreview() {
+    MaterialTheme {
+        PlantDescription("HTML<br><br>description")
     }
 }
 
