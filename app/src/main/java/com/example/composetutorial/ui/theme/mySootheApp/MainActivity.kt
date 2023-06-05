@@ -3,6 +3,8 @@ package com.example.composetutorial.ui.theme.mySootheApp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -10,7 +12,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -22,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.composetutorial.ui.theme.ComposeTutorialTheme
@@ -64,16 +69,20 @@ fun SearchBar(
 }
 
 @Composable
-fun AlignYourBodyElement(modifier: Modifier = Modifier, data: DataBody) {
+fun AlignYourBodyElement(
+    modifier: Modifier = Modifier, @DrawableRes drawable: Int,
+    @StringRes text: Int,
+) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Image(
-            painter = data.image, contentDescription = null,
+            painter = painterResource(drawable),
+            contentDescription = null,
             contentScale = ContentScale.Crop, modifier = Modifier
                 .size(44.dp)
                 .clip(CircleShape)
         )
         Text(
-            text = data.name,
+            text = stringResource(text),
             style = MaterialTheme.typography.h6,
             modifier = Modifier.paddingFromBaseline(top = 24.dp, bottom = 8.dp)
         )
@@ -86,41 +95,67 @@ data class DataBody(
 )
 
 @Composable
-fun FavoriteCollectionCard(modifier: Modifier = Modifier, data: DataBody) {
+fun FavoriteCollectionCard(
+    modifier: Modifier = Modifier, @DrawableRes drawable: Int,
+    @StringRes text: Int,
+) {
     Surface(shape = MaterialTheme.shapes.small, modifier = modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.width(192.dp)
         ) {
             Image(
-                painter = data.image,
+                painter = painterResource(drawable),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.size(56.dp)
             )
             Text(
-                text = data.name
+                text = stringResource(text),
             )
         }
     }
 }
 
+private val alignYourBodyData = listOf(
+    R.drawable.ic_clock to R.string.search_text,
+    R.drawable.ic_clock to R.string.search_text,
+    R.drawable.ic_clock to R.string.search_text,
+    R.drawable.ic_clock to R.string.search_text,
+    R.drawable.ic_clock to R.string.search_text,
+    R.drawable.ic_clock to R.string.search_text,
+).map { DrawableStringPair(it.first, it.second) }
+
+private val favoriteCollectionsData = listOf(
+    R.drawable.ic_clock to R.string.search_text,
+    R.drawable.ic_clock to R.string.search_text,
+    R.drawable.ic_clock to R.string.search_text,
+    R.drawable.ic_clock to R.string.search_text,
+    R.drawable.ic_clock to R.string.search_text,
+    R.drawable.ic_clock to R.string.search_text,
+    R.drawable.ic_clock to R.string.search_text,
+).map { DrawableStringPair(it.first, it.second) }
+
+private data class DrawableStringPair(
+    @DrawableRes val drawable: Int,
+    @StringRes val text: Int
+)
+
 @Composable
-fun AlignYourBodyRow(modifier: Modifier = Modifier, data: List<DataBody>) {
+fun AlignYourBodyRow(modifier: Modifier = Modifier) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(horizontal = 16.dp),
         modifier = modifier
     ) {
-        items(data) { item ->
-            AlignYourBodyElement(data = item)
+        items(alignYourBodyData) { item ->
+            AlignYourBodyElement(drawable = item.drawable, text = item.text)
         }
     }
-
 }
 
 @Composable
-fun FavoriteCollectionsGrid(modifier: Modifier = Modifier, data: List<DataBody>) {
+fun FavoriteCollectionsGrid(modifier: Modifier = Modifier) {
 
     LazyHorizontalGrid(
         rows = GridCells.Fixed(2),
@@ -129,11 +164,49 @@ fun FavoriteCollectionsGrid(modifier: Modifier = Modifier, data: List<DataBody>)
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier.height(120.dp)
     ) {
-        items(data) { item ->
+        items(favoriteCollectionsData) { item ->
             FavoriteCollectionCard(
-                modifier = Modifier.height(56.dp), data = item
+                modifier = Modifier.height(56.dp), drawable = item.drawable, text = item.text
             )
         }
+    }
+}
+
+@Composable
+fun HomeSection(
+    @StringRes title: Int,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Column(modifier = modifier) {
+        Text(
+            stringResource(title),
+            modifier = Modifier
+                .paddingFromBaseline(top = 40.dp, bottom = 8.dp)
+                .padding(horizontal = 16.dp)
+        )
+        content()
+    }
+}
+
+@Composable
+fun HomeScreen(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier
+            .verticalScroll(rememberScrollState())
+            .padding(vertical = 16.dp)
+    ) {
+        Spacer(Modifier.height(16.dp))
+        SearchBar(Modifier.padding(horizontal = 16.dp))
+        HomeSection(title = R.string.search_text) {
+            AlignYourBodyRow()
+        }
+        HomeSection(title = R.string.search_text) {
+            FavoriteCollectionsGrid()
+        }
+        Spacer(Modifier.height(16.dp))
     }
 }
 
@@ -149,8 +222,11 @@ private fun SearchBarPreview() {
 @Composable
 private fun AlignYourBodyElementPreview() {
     ComposeTutorialTheme {
-        val data = DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre")
-        AlignYourBodyElement(modifier = Modifier.padding(8.dp), data = data)
+        AlignYourBodyElement(
+            modifier = Modifier.padding(8.dp),
+            drawable = R.drawable.ic_clock,
+            text = R.string.search_text
+        )
     }
 }
 
@@ -158,8 +234,10 @@ private fun AlignYourBodyElementPreview() {
 @Composable
 private fun FavoriteCollectionCardPreview() {
     ComposeTutorialTheme {
-        val data = DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre")
-        FavoriteCollectionCard(modifier = Modifier.padding(8.dp), data = data)
+        FavoriteCollectionCard(
+            modifier = Modifier.padding(8.dp), drawable = R.drawable.ic_clock,
+            text = R.string.search_text
+        )
     }
 }
 
@@ -167,20 +245,7 @@ private fun FavoriteCollectionCardPreview() {
 @Composable
 private fun AlignYourBodyRowPreview() {
     ComposeTutorialTheme {
-        val data = arrayListOf(
-            DataBody(
-                image = painterResource(id = R.drawable.ic_clock),
-                name = "Nombre"
-            ),
-            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
-            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
-            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
-            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
-            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
-            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
-            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre")
-        )
-        AlignYourBodyRow(modifier = Modifier.padding(8.dp), data = data)
+        AlignYourBodyRow(modifier = Modifier.padding(8.dp))
     }
 }
 
@@ -189,19 +254,26 @@ private fun AlignYourBodyRowPreview() {
 @Composable
 private fun FavoriteCollectionsGridPreview() {
     ComposeTutorialTheme {
-        val data = arrayListOf(
-            DataBody(
-                image = painterResource(id = R.drawable.ic_clock),
-                name = "Nombre"
-            ),
-            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
-            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
-            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
-            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
-            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
-            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
-            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre")
-        )
-        FavoriteCollectionsGrid(data = data)
+        FavoriteCollectionsGrid()
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFF0EAE2)
+@Composable
+private fun HomeSectionPreview() {
+    ComposeTutorialTheme {
+        HomeSection(
+            title = R.string.search_text,
+            content = { AlignYourBodyRow() })
+    }
+}
+
+
+@Preview(showBackground = true, backgroundColor = 0xFFF0EAE2)
+@Composable
+private fun HomeScreenPreview() {
+    ComposeTutorialTheme {
+
+        HomeScreen()
     }
 }
