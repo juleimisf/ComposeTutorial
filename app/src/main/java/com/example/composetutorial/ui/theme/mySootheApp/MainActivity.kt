@@ -5,6 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -100,6 +105,38 @@ fun FavoriteCollectionCard(modifier: Modifier = Modifier, data: DataBody) {
     }
 }
 
+@Composable
+fun AlignYourBodyRow(modifier: Modifier = Modifier, data: List<DataBody>) {
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        modifier = modifier
+    ) {
+        items(data) { item ->
+            AlignYourBodyElement(data = item)
+        }
+    }
+
+}
+
+@Composable
+fun FavoriteCollectionsGrid(modifier: Modifier = Modifier, data: List<DataBody>) {
+
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(2),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.height(120.dp)
+    ) {
+        items(data) { item ->
+            FavoriteCollectionCard(
+                modifier = Modifier.height(56.dp), data = item
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, backgroundColor = 0xFFF0EAE2)
 @Composable
 private fun SearchBarPreview() {
@@ -123,5 +160,48 @@ private fun FavoriteCollectionCardPreview() {
     ComposeTutorialTheme {
         val data = DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre")
         FavoriteCollectionCard(modifier = Modifier.padding(8.dp), data = data)
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFF0EAE2)
+@Composable
+private fun AlignYourBodyRowPreview() {
+    ComposeTutorialTheme {
+        val data = arrayListOf(
+            DataBody(
+                image = painterResource(id = R.drawable.ic_clock),
+                name = "Nombre"
+            ),
+            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
+            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
+            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
+            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
+            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
+            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
+            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre")
+        )
+        AlignYourBodyRow(modifier = Modifier.padding(8.dp), data = data)
+    }
+}
+
+
+@Preview(showBackground = true, backgroundColor = 0xFFF0EAE2)
+@Composable
+private fun FavoriteCollectionsGridPreview() {
+    ComposeTutorialTheme {
+        val data = arrayListOf(
+            DataBody(
+                image = painterResource(id = R.drawable.ic_clock),
+                name = "Nombre"
+            ),
+            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
+            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
+            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
+            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
+            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
+            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre"),
+            DataBody(image = painterResource(id = R.drawable.ic_clock), name = "Nombre")
+        )
+        FavoriteCollectionsGrid(data = data)
     }
 }
