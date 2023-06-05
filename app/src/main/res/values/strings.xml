@@ -10,4 +10,6 @@
         <item quantity="other">%d días.</item>
     </plurals>
 
+    <string name="search_text">Search</string>
+
 </resources>
