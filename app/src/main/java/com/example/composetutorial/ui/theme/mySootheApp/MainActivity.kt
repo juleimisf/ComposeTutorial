@@ -21,6 +21,8 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.material.Text
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Spa
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
@@ -36,8 +38,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ComposeTutorialTheme() {
-                SearchBar()
+            ComposeTutorialTheme {
+                MySootheApp()
             }
         }
     }
@@ -205,6 +207,56 @@ fun HomeScreen(
     }
 }
 
+@Composable
+private fun SootheBottomNavigation(modifer: Modifier = Modifier) {
+    BottomNavigation(backgroundColor = MaterialTheme.colors.background, modifier = modifer)
+    {
+
+        BottomNavigationItem(
+            selected = true,
+            onClick = { /*TODO*/ },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Spa,
+                    contentDescription = null
+                )
+            },
+            label = {
+                Text(
+                    text = "Option 1"
+                )
+            }
+        )
+        BottomNavigationItem(
+            selected = false,
+            onClick = { /*TODO*/ },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = null
+                )
+            },
+            label = {
+                Text(
+                    text = "Option 1"
+                )
+            }
+        )
+    }
+}
+
+@Composable
+fun MySootheApp(){
+    ComposeTutorialTheme {
+       Scaffold(bottomBar = {SootheBottomNavigation()})
+
+       {
+        paddingValues ->
+        HomeScreen(Modifier.padding(paddingValues))
+       }
+    }
+}
+
 @Preview(showBackground = true, backgroundColor = 0xFFF0EAE2)
 @Composable
 private fun SearchBarPreview() {
@@ -270,5 +322,13 @@ private fun HomeScreenPreview() {
     ComposeTutorialTheme {
 
         HomeScreen()
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFF0EAE2)
+@Composable
+private fun SootheBottomNavigationPreview() {
+    ComposeTutorialTheme {
+        SootheBottomNavigation()
     }
 }
