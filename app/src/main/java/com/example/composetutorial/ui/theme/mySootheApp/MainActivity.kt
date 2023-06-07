@@ -89,11 +89,6 @@ fun AlignYourBodyElement(
     }
 }
 
-data class DataBody(
-    val image: Painter,
-    val name: String
-)
-
 @Composable
 fun FavoriteCollectionCard(
     modifier: Modifier = Modifier, @DrawableRes drawable: Int,
