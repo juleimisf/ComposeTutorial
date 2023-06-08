@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    WaterCounter()
+                    WellnessScreen()
                 }
             }
         }
@@ -57,6 +57,21 @@ fun StatefulCounter(modifier: Modifier = Modifier) {
     StatelessCounter(count, { count++ }, modifier)
 }
 
+@Composable
+fun WellnessScreen(modifier: Modifier = Modifier) {
+    Column(modifier = modifier) {
+        StatefulCounter()
+
+        val list = remember {
+            getWellnessTasks().toMutableStateList()
+        }
+        WellnessTasksList(list = list, onCloseTask = {task -> list.remove(task)})
+    }
+}
+
+private fun getWellnessTasks() = List(30) { i -> WellnessTask(i, "Task # $i") }
+
+
 @Preview(showBackground = true, backgroundColor = 0xFFF0EAE2)
 @Composable
 private fun WaterCounterPreview() {
@@ -64,3 +79,12 @@ private fun WaterCounterPreview() {
         WaterCounter()
     }
 }
+
+@Preview(showBackground = true, backgroundColor = 0xFFF0EAE2)
+@Composable
+private fun WellnessScreenPreview() {
+    ComposeTutorialTheme() {
+        WellnessScreen()
+    }
+}
+
